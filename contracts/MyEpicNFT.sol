@@ -30,7 +30,7 @@ contract MyEpicNFT is ERC721URIStorage {
         "Python",
         "Ethereum",
         "Medellin",
-        "Hot"
+        "Flaca"
     ];
 
     string[] secondWords = [
@@ -143,7 +143,7 @@ contract MyEpicNFT is ERC721URIStorage {
         console.log(
             string(
                 abi.encodePacked(
-                    "https://nftpreview.0xdev.codes/?code=",
+                    "https://nft-preview-sooty.vercel.app?code=",
                     finalTokenUri
                 )
             )
