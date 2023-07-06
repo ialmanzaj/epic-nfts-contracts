@@ -17,6 +17,8 @@ contract MyEpicNFT is ERC721URIStorage {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
+    event Minted(uint indexed tokenId, string image);
+
     // This is our SVG code. All we need to change is the word that's displayed. Everything else stays the same.
     // So, we make a baseSvg variable here that all our NFTs can use.
     string baseSvg =
@@ -52,7 +54,7 @@ contract MyEpicNFT is ERC721URIStorage {
     ];
 
     // We need to pass the name of our NFTs token and its symbol.
-    constructor() ERC721("SquareNFT", "SQUARE") {
+    constructor() ERC721("BoothNFT", "BOOTH") {
         console.log("This is my NFT contract. Whoa!");
     }
 
@@ -99,10 +101,52 @@ contract MyEpicNFT is ERC721URIStorage {
         return uint256(keccak256(abi.encodePacked(input)));
     }
 
+    function getTotalNFTs() view public returns(uint) {
+        uint total =  _tokenIds.current();
+        return total;
+    }
+/*
+    function tokenURI(uint256 id) public view override returns (string memory) {
+      require(_exists(id), "not exist");
+      string memory name = string(abi.encodePacked('Loogie #',id.toString()));
+      string memory description = string(abi.encodePacked('This Loogie is the color #',color[id].toColor(),' with a chubbiness of ',uint2str(chubbiness[id]),'!!!'));
+      string memory image = Base64.encode(bytes(generateSVGofTokenById(id)));
+
+      return
+          string(
+              abi.encodePacked(
+                'data:application/json;base64,',
+                Base64.encode(
+                    bytes(
+                          abi.encodePacked(
+                              '{"name":"',
+                              name,
+                              '", "description":"',
+                              description,
+                              '", "external_url":"https://burnyboys.com/token/',
+                              id.toString(),
+                              '", "attributes": [{"trait_type": "color", "value": "#',
+                              color[id].toColor(),
+                              '"},{"trait_type": "chubbiness", "value": ',
+                              uint2str(chubbiness[id]),
+                              '}], "owner":"',
+                              (uint160(ownerOf(id))).toHexString(20),
+                              '", "image": "',
+                              'data:image/svg+xml;base64,',
+                              image,
+                              '"}'
+                          )
+                        )
+                    )
+              )
+          );
+  }
+*/
     // A function our user will hit to get their NFT.
     function makeAnEpicNFT() public {
         // Get the current tokenId, this starts at 0.
         uint256 newItemId = _tokenIds.current();
+
 
         // We go and randomly grab one word from each of the three arrays.
         string memory first = pickRandomFirstWord(newItemId);
@@ -116,6 +160,7 @@ contract MyEpicNFT is ERC721URIStorage {
         string memory finalSvg = string(
             abi.encodePacked(baseSvg, combinedWord, "</text></svg>")
         );
+
 
         // Get all the JSON metadata in place and base64 encode it.
         string memory json = Base64.encode(
@@ -134,12 +179,15 @@ contract MyEpicNFT is ERC721URIStorage {
             )
         );
 
+
+
         // Just like before, we prepend data:application/json;base64, to our data.
         string memory finalTokenUri = string(
             abi.encodePacked("data:application/json;base64,", json)
         );
 
-        console.log("\n--------------------");
+        //console.log("\n--------------------");
+        /*
         console.log(
             string(
                 abi.encodePacked(
@@ -148,7 +196,8 @@ contract MyEpicNFT is ERC721URIStorage {
                 )
             )
         );
-        console.log("--------------------\n");
+        */
+        //console.log("--------------------\n");
 
         _safeMint(msg.sender, newItemId);
 
@@ -162,5 +211,6 @@ contract MyEpicNFT is ERC721URIStorage {
             newItemId,
             msg.sender
         );
+        emit Minted(newItemId, finalTokenUri);
     }
 }
